@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 40px;
+    }
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      flex: 1 1 200px;
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 26px;
+    }
+    .card p {
+      margin-top: 8px;
+      font-size: 18px;
+    }
+    .card.sales { background-color: #17a2b8; }
+    .card.orders { background-color: #ffc107; color: #212529; }
+    .card.customers { background-color: #28a745; }
+    .card.topdish { background-color: #dc3545; }
+    .card.profit { background-color: #6f42c1; }
+
+    canvas {
+      margin-top: 40px;
+      width: 100% !important;
+      max-height: 320px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Restaurant Daily Report</h2>
+
+  <div class="summary">
+    <div class="card sales">
+      <h3>₹12,450</h3>
+      <p>Total Sales</p>
+    </div>
+    <div class="card orders">
+      <h3>120</h3>
+      <p>Orders</p>
+    </div>
+    <div class="card customers">
+      <h3>112</h3>
+      <p>Customers</p>
+    </div>
+    <div class="card topdish">
+      <h3>Parota</h3>
+      <p>Top Dish</p>
+    </div>
+    <div class="card profit">
+      <h3>₹42,300</h3>
+      <p>Monthly Profit</p>
+    </div>
+  </div>
+
+  <!-- Hourly Sales Bar Chart -->
+  <canvas id="salesChart"></canvas>
+
+  <!-- Monthly Profit Line Chart -->
+  <canvas id="profitChart"></canvas>
+</div>
+
+<script>
+  // Bar Chart - Hourly Sales
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, '#6a11cb');
+  gradient.addColorStop(1, '#2575fc');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM'],
+      datasets: [{
+        label: 'Sales (₹)',
+        data: [1200, 1800, 2450, 3000, 2200, 1500, 1300],
+        backgroundColor: gradient,
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Hourly Sales Overview',
+          font: { size: 18 }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: value => '₹' + value
+          }
+        }
+      }
+    }
+  });
+
+  // Line Chart - Monthly Profit Trend
+  const ctx2 = document.getElementById('profitChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'Weekly Profit (₹)',
+        data: [9500, 11000, 9800, 12000],
+        fill: true,
+        backgroundColor: 'rgba(111, 66, 193, 0.2)',
+        borderColor: '#6f42c1',
+        tension: 0.4,
+        pointBackgroundColor: '#6f42c1'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Monthly Profit Trend',
+          font: { size: 18 }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: value => '₹' + value
+          }
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer List </title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+      padding: 30px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .form-inputs input {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: calc(25% - 12px);
+    }
+    .form-inputs button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 25px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    .btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .edit-btn {
+      background: #ffc107;
+    }
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>👥 Customer Management</h2>
+
+    <div class="form-inputs">
+      <input type="text" id="name" placeholder="Name">
+      <input type="email" id="email" placeholder="Email">
+      <input type="text" id="phone" placeholder="Phone">
+      <input type="text" id="address" placeholder="Address">
+      <button onclick="addCustomer()">Add Customer</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="customerTable">
+        <!-- Customer rows here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let customers = [
+  { id: 1, name: "Ramya", email: "ramya@gmail.com", phone: "9876543210", address: "12 Green Park" },
+  { id: 2, name: "Maya", email: "maya001@gmail.com", phone: "9876543211", address: "23 Rose Street" },
+  { id: 3, name: "Swetha", email: "swetharamesh@gmail.com", phone: "9876543212", address: "34 Lake View" },
+  { id: 4, name: "Dhinesh", email: "dhinesh25@gmail.com", phone: "9876543213", address: "45 River Lane" },
+  { id: 5, name: "Priya", email: "priyamohan@gmail.com", phone: "9876543214", address: "56 Garden Road" },
+  { id: 6, name: "Sindhu", email: "sindhu@gmail.com", phone: "9876543215", address: "67 Hill Top" },
+  { id: 7, name: "Gayathri", email: "gayathri@gmail.com", phone: "9876543216", address: "78 Ocean Drive" },
+  { id: 8, name: "Naresh", email: "naresh@gmail.com", phone: "9876543217", address: "89 Sunset Blvd" },
+  { id: 9, name: "Ashwin", email: "ashwinash@gmail.com", phone: "9876543218", address: "90 Palm Street" },
+  { id: 10, name: "Praveen", email: "praveenpk@gmail.com", phone: "9876543219", address: "101 Horizon Ave" },
+  { id: 11, name: "Sanjana", email: "sanjana30@gmail.com", phone: "9876543220", address: "111 Maple Lane" }
+];
+
+
+    function renderCustomers() {
+      const table = document.getElementById("customerTable");
+      table.innerHTML = "";
+
+      customers.forEach((c) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${c.name}</td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td>${c.address}</td>
+          <td>
+            <button class="btn edit-btn" onclick="editCustomer(${c.id})">Edit</button>
+            <button class="btn delete-btn" onclick="deleteCustomer(${c.id})">Delete</button>
+          </td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function addCustomer() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!name || !email || !phone || !address) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const newCustomer = {
+        id: customers.length ? customers[customers.length - 1].id + 1 : 1,
+        name, email, phone, address
+      };
+
+      customers.push(newCustomer);
+      renderCustomers();
+
+      // Clear inputs
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
+    }
+
+    function editCustomer(id) {
+      const customer = customers.find(c => c.id === id);
+      if (!customer) return;
+
+      const name = prompt("Edit Name:", customer.name);
+      const email = prompt("Edit Email:", customer.email);
+      const phone = prompt("Edit Phone:", customer.phone);
+      const address = prompt("Edit Address:", customer.address);
+
+      if (name && email && phone && address) {
+        customer.name = name;
+        customer.email = email;
+        customer.phone = phone;
+        customer.address = address;
+        renderCustomers();
+
+      }
+    }
+
+    function deleteCustomer(id) {
+      if (confirm("Are you sure you want to delete this customer?")) {
+        customers = customers.filter(c => c.id !== id);
+        renderCustomers();
+      }
+    }
+
+    // Initial render
+    renderCustomers();
+  </script>
+
+</body>
+</html>

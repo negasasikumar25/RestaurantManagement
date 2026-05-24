@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Menu Admin</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .save-btn {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .save-btn:hover {
+      background-color: #0056b3;
+    }
+    
+
+    .menu-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .menu-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .menu-content {
+      padding: 15px;
+    }
+
+    .menu-title {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+    }
+
+    .menu-price {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .menu-desc {
+      margin-top: 10px;
+      color: #555;
+      font-size: 0.95em;
+    }
+
+    .menu-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .menu-actions button {
+      margin-left: 5px;
+      padding: 5px 10px;
+      font-size: 0.8em;
+      border: none;
+      cursor: pointer;
+    }
+
+    .edit-btn { background: #ffc107; color: white; }
+    .delete-btn { background: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+
+  <h1>Menu</h1>
+
+  <div class="form-container">
+    <input type="hidden" id="editIndex" value="-1" />
+    <input type="text" id="dishName" placeholder="Dish Name" required />
+    <input type="text" id="dishPrice" placeholder="Price" required />
+    <textarea id="dishDesc" placeholder="Description" rows="3" required></textarea>
+    <input type="file" id="dishImage" accept="image/*" />
+    <button class="save-btn" onclick="saveMenuItem()">Save Menu Item</button>
+  </div>
+
+  <div class="menu-container" id="menuList"></div>
+
+  <script>
+    let menuItems = [
+      {
+        name: "Dosa",
+        price: "&#8377 50",
+        desc: "Thin, crispy South Indian crepe made from fermented rice and lentil batter—served with sambar and chutney.",
+        image: "images/dosa.jpg"
+      },
+      {
+        name: "Poori",
+        price: "&#8377 50",
+        desc: "Puffed, deep-fried wheat bread—light, fluffy, and typically paired with flavorful curries.",
+        image: "images/poori.jpg"
+      },
+      {
+        name: "Mini Idly",
+        price: "&#8377 80",
+        desc: "Bite-sized soft idlis served with sambar or chutney—comforting, cute, and full of flavor.",
+        image: "images/mini idly.jpg"
+      },
+      {
+        name: "Vada",
+        price: "&#8377 20",
+        desc: "Crispy, golden lentil fritters with a soft inside—perfectly spiced and served hot with chutney.",
+        image: "images/vada.jpg"
+      },
+      {
+        name: "Chicken 65",
+        price: "&#8377 180",
+        desc: "Crispy, deep-fried chicken bites marinated in bold South Indian spices—fiery, tangy, and totally addictive.",
+        image: "images/chicken 65.jpg"
+      },
+      {
+        name: "Chicken biryani",
+        price: "&#8377 200",
+        desc: "Fragrant basmati rice cooked with tender chicken, aromatic spices, and herbs—layered to perfection.",
+        image: "images/chicken biryani.jpg"
+      },
+      {
+        name: "Fish fry",
+        price: "&#8377 180",
+        desc: "Fresh fish marinated with regional spices and shallow-fried until golden and crisp on the outside.",
+        image: "images/fish fry.jpg"
+      },
+      {
+        name: "Parota",
+        price: "&#8377 50",
+        desc: "Flaky, layered South Indian flatbread made with refined flour—soft inside, slightly crispy outside, and perfect with spicy curries.",
+        image: "images/parota.jpg"
+      },
+      {
+        name: "Coffee",
+        price: "&#8377 25",
+        desc: "Strong, aromatic South Indian filter coffee—served hot, creamy, and satisfying.",
+        image: "images/coffee.jpg"
+      },
+      {
+        name: "Ice cream",
+        price: "&#8377 80",
+        desc: "Rich, creamy scoops of classic ice cream—perfectly sweet and refreshing.",
+        image: "images/ice cream.jpg"
+      }
+    ];
+
+    function renderMenu() {
+      const menuList = document.getElementById('menuList');
+      menuList.innerHTML = "";
+
+      menuItems.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'menu-card';
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="menu-content">
+            <h3 class="menu-title">${item.name}</h3>
+            <p class="menu-price">${item.price}</p>
+            <p class="menu-desc">${item.desc}</p>
+          </div>
+          <div class="menu-actions">
+            <button class="edit-btn" onclick="editItem(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+          </div>
+        `;
+        menuList.appendChild(card);
+      });
+    }
+
+    function saveMenuItem() {
+      const name = document.getElementById('dishName').value.trim();
+      const price = "&#8377; " + document.getElementById('dishPrice').value.trim();
+      const desc = document.getElementById('dishDesc').value.trim();
+      const imageInput = document.getElementById('dishImage');
+      const editIndex = document.getElementById('editIndex').value;
+
+      if (!name || !price || !desc) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      const saveItem = (imageData) => {
+        const newItem = { name, price, desc, image: imageData };
+
+        if (editIndex == -1) {
+          menuItems.push(newItem);
+        } else {
+          menuItems[editIndex] = newItem;
+          document.getElementById('editIndex').value = -1;
+        }
+
+        resetForm();
+        renderMenu();
+      };
+
+      if (imageInput.files.length > 0) {
+        reader.onload = function (e) {
+          saveItem(e.target.result);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      } else {
+        if (editIndex == -1) {
+          alert("Please select an image.");
+        } else {
+          saveItem(menuItems[editIndex].image); // keep existing image
+        }
+      }
+    }
+
+    function editItem(index) {
+      const item = menuItems[index];
+      document.getElementById('dishName').value = item.name;
+      document.getElementById('dishPrice').value = item.price;
+      document.getElementById('dishDesc').value = item.desc;
+      document.getElementById('editIndex').value = index;
+      document.getElementById('dishImage').value = ''; // Reset file input
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteItem(index) {
+      if (confirm("Delete this item?")) {
+        menuItems.splice(index, 1);
+        renderMenu();
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('dishName').value = '';
+      document.getElementById('dishPrice').value = '';
+      document.getElementById('dishDesc').value = '';
+      document.getElementById('dishImage').value = '';
+    }
+
+    renderMenu();
+  </script>
+
+</body>
+</html>

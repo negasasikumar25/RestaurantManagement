@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Toast Notification Styling */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-in-out, transform 0.4s;
+            transform: translateY(-20px);
+            z-index: 1000;
+        }
+
+        #toast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <form id="loginForm">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" id="username" placeholder="Username" required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" id="password" placeholder="Password" required>
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="remember-forget">
+                <label><input type="checkbox" id="rememberMe"> Remember Me</label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+        </form>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast">Login successful!</div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const rememberedUsername = localStorage.getItem('username');
+            if (rememberedUsername) {
+                document.getElementById('username').value = rememberedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        const toast = document.getElementById('toast');
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            const correctUsername = 'admin';
+            const correctPassword = 'password123';
+
+            const messageBox = document.getElementById('errorMessage');
+
+            if (username === correctUsername && password === correctPassword) {
+                localStorage.setItem('isLoggedIn', 'true');
+                if (rememberMe) {
+                    localStorage.setItem('username', username);
+                }
+
+                messageBox.style.display = 'none'; // Hide error box if showing
+                showToast('Login successful!');
+
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+            } else {
+                messageBox.style.color = 'red';
+                messageBox.textContent = 'Invalid credentials, please try again.';
+                messageBox.style.display = 'block';
+            }
+        });
+
+        document.getElementById('username').addEventListener('input', () => {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        document.getElementById('password').addEventListener('input', () => {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

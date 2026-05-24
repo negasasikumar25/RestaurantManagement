@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+    h2 {
+      text-align: center;
+    }
+    .add-form input {
+      padding: 6px;
+      margin: 5px 10px 5px 0;
+      width: 160px;
+    }
+    .add-form button {
+      padding: 6px 16px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .edit-btn {
+      background: #ffc107;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Staff Management</h2>
+
+  <div class="add-form">
+    <input type="text" id="staffName" placeholder="Name">
+    <input type="text" id="staffRole" placeholder="Role">
+    <input type="email" id="staffEmail" placeholder="Email">
+    <input type="text" id="staffPhone" placeholder="Phone">
+    <button onclick="addStaff()">Add Staff</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="staffTableBody">
+      <!-- Staff list will be inserted here -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const staffList = [
+    { id: 1, name: "Priya", role: "Manager", email: "priya12@gmail.com", phone: "9357861528" },
+    { id: 2, name: "Reshma", role: "Cashier", email: "reshma28@gmail.com", phone: "8576985264" },
+    { id: 3, name: "Karthik", role: "Chef", email: "karthik07@gmail.com", phone: "9863755715" },
+    { id: 4, name: "Swathi", role: "Waitress", email: "swathireddy@gmail.com", phone: "9825763312" },
+    { id: 5, name: "Arjun", role: "Chef", email: "arjun25@gmail.com", phone: "8598736522" }
+  ];
+
+  function renderStaffList() {
+    const tbody = document.getElementById("staffTableBody");
+    tbody.innerHTML = "";
+
+    staffList.forEach(staff => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${staff.name}</td>
+        <td>${staff.role}</td>
+        <td>${staff.email}</td>
+        <td>${staff.phone}</td>
+        <td>
+          <button class="edit-btn" onclick="editStaff(${staff.id})">Edit</button>
+          <button class="delete-btn" onclick="deleteStaff(${staff.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function addStaff() {
+    const name = document.getElementById("staffName").value.trim();
+    const role = document.getElementById("staffRole").value.trim();
+    const email = document.getElementById("staffEmail").value.trim();
+    const phone = document.getElementById("staffPhone").value.trim();
+
+    if (!name || !role || !email || !phone) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const newStaff = {
+      id: Date.now(), // updated to avoid duplicate IDs
+      name,
+      role,
+      email,
+      phone
+    };
+
+    staffList.push(newStaff);
+    renderStaffList();
+
+    // Clear input fields
+    document.getElementById("staffName").value = "";
+    document.getElementById("staffRole").value = "";
+    document.getElementById("staffEmail").value = "";
+    document.getElementById("staffPhone").value = "";
+  }
+
+  function editStaff(id) {
+    const staff = staffList.find(s => s.id === id);
+    if (!staff) return;
+
+    const newName = prompt("Enter new name:", staff.name);
+    const newRole = prompt("Enter new role:", staff.role);
+    const newEmail = prompt("Enter new email:", staff.email);
+    const newPhone = prompt("Enter new phone number:", staff.phone);
+
+    if (newName && newRole && newEmail && newPhone) {
+      staff.name = newName;
+      staff.role = newRole;
+      staff.email = newEmail;
+      staff.phone = newPhone;
+      renderStaffList();
+    }
+  }
+
+  function deleteStaff(id) {
+    const index = staffList.findIndex(s => s.id === id);
+    if (index !== -1) {
+      staffList.splice(index, 1);
+      renderStaffList();
+    }
+  }
+
+  // Initial render
+  renderStaffList();
+</script>
+
+</body>
+</html>
